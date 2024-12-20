@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Math Challenge Game</title>
+    <style>
+      /* Reset default margin and padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Full viewport background animation */
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(45deg, #ff5722, #ff9800, #4caf50, #2196f3);
+        background-size: 400% 400%;
+        animation: gradient 10s ease infinite;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+        overflow: hidden;
+        margin: 0;
+      }
+
+      /* Background animation keyframes */
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* Game container with shadow, color transitions, and animation */
+      #game-container {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+        transform: scale(0.95);
+        animation: scaleIn 0.5s ease forwards;
+        position: relative;
+      }
+
+      /* Animation to scale game container */
+      @keyframes scaleIn {
+        0% {
+          transform: scale(0.95);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Heading style */
+      h1 {
+        font-size: 36px;
+        color: #ff5722;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+      }
+
+      /* Score and question text */
+      #score,
+      #question {
+        font-size: 24px;
+        color: #ff5722;
+        margin: 15px 0;
+      }
+
+      /* Input field */
+      input[type="text"] {
+        padding: 10px;
+        font-size: 18px;
+        border-radius: 5px;
+        border: 2px solid #ff5722;
+        outline: none;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+        width: 80%;
+      }
+
+      input[type="text"]:focus {
+        border-color: #2196f3;
+        transform: scale(1.05);
+      }
+
+      /* Button style */
+      button {
+        background-color: #ff5722;
+        color: white;
+        font-size: 18px;
+        padding: 12px 20px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 80%;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background-color: #e64a19;
+        transform: translateY(-5px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Feedback animation */
+      .correct,
+      .wrong {
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 10px;
+        transition: all 0.5s ease-in-out;
+      }
+
+      .correct {
+        color: #4caf50;
+        animation: bounceIn 1s;
+      }
+
+      .wrong {
+        color: #f44336;
+        animation: shake 0.5s ease-in-out;
+      }
+
+      /* Bounce animation for correct answer */
+      @keyframes bounceIn {
+        0% {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+        50% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Shake animation for wrong answer */
+      @keyframes shake {
+        0% {
+          transform: translateX(-5px);
+        }
+        25% {
+          transform: translateX(5px);
+        }
+        50% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
+        100% {
+          transform: translateX(0);
+        }
+      }
+
+      /* Signature section */
+      .signature {
+        margin-top: 30px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #ff5722;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        #game-container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 28px;
+        }
+
+        #score,
+        #question {
+          font-size: 20px;
+        }
+
+        input[type="text"],
+        button {
+          width: 100%;
+          padding: 10px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 24px;
+        }
+
+        #score,
+        #question {
+          font-size: 18px;
+        }
+
+        input[type="text"],
+        button {
+          width: 100%;
+          padding: 8px;
+          font-size: 16px;
+        }
+
+        .signature {
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container">
+      <h1>Math Challenge Game</h1>
+      <div id="score">Score: 0</div>
+      <div id="question"></div>
+      <input
+        type="text"
+        id="answer"
+        placeholder="Enter your answer"
+        autofocus
+      />
+      <button id="submit-btn">Submit</button>
+      <div id="feedback"></div>
+      <div class="signature">Created by Lethabo Semenya</div>
+    </div>
+
+    <script>
+      // Initializing variables
+      let score = 0;
+      let currentQuestion = {};
+      const scoreElement = document.getElementById("score");
+      const questionElement = document.getElementById("question");
+      const answerElement = document.getElementById("answer");
+      const feedbackElement = document.getElementById("feedback");
+      const submitButton = document.getElementById("submit-btn");
+
+      // Function to generate a random math question
+      function generateQuestion() {
+        const num1 = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+        const num2 = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+        const operation = Math.random() > 0.5 ? "+" : "-"; // Random operation (+ or -)
+
+        if (operation === "+") {
+          currentQuestion.answer = num1 + num2;
+        } else {
+          currentQuestion.answer = num1 - num2;
+        }
+
+        currentQuestion.question = `${num1} ${operation} ${num2}`;
+        questionElement.textContent = `Solve: ${currentQuestion.question}`;
+      }
+
+      // Function to check the answer
+      function checkAnswer() {
+        const userAnswer = parseInt(answerElement.value);
+        if (userAnswer === currentQuestion.answer) {
+          score++;
+          feedbackElement.textContent = "Correct!";
+          feedbackElement.classList.remove("wrong");
+          feedbackElement.classList.add("correct");
+        } else {
+          feedbackElement.textContent = "Wrong!";
+          feedbackElement.classList.remove("correct");
+          feedbackElement.classList.add("wrong");
+        }
+        scoreElement.textContent = `Score: ${score}`;
+        answerElement.value = "";
+        generateQuestion();
+      }
+
+      // Submit button click event
+      submitButton.addEventListener("click", checkAnswer);
+
+      // Generate the first question
+      generateQuestion();
+
+      // Allow pressing "Enter" to submit the answer
+      answerElement.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          checkAnswer();
+        }
+      });
+    </script>
+  </body>
+</html>
